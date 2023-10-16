@@ -1,10 +1,5 @@
 #!/usr/bin/python3
-"""
-Unit tests for file_storage.py within models/engine.
-Test Classes:
-    FileStorageCreationTests
-    FileStorageFunctionalityTests
-"""
+"""Unit tests for file_storage.py within models/engine."""
 
 import unittest
 import os
