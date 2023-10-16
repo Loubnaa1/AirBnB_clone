@@ -51,7 +51,7 @@ class TestFileStorage_methods(unittest.TestCase):
         cls.rv = Review()
         cls.objs = [cls.bm, cls.us, cls.st, cls.pl, cls.cy, cls.am, cls.rv]
         cls.model_names = [
-            "BaseModel", "User", "State", 
+            "BaseModel", "User", "State",
             "Place", "City", "Amenity", "Review"
         ]
 
@@ -61,7 +61,7 @@ class TestFileStorage_methods(unittest.TestCase):
             os.remove("file.json")
         except FileNotFoundError:
             pass
-    
+
     def setUp(self):
         self.storage = FileStorage()
         for obj in self.objs:
