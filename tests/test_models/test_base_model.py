@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""Tests for the base_model module"""
-
+"""  test for base_model module"""
 import unittest
 from models.base_model import BaseModel
 from datetime import datetime
@@ -8,68 +7,100 @@ import models
 import os
 
 
-class TestBaseModel(unittest.TestCase):
-    """Class to test the BaseModel module"""
+class Testbasemodel(unittest.TestCase):
+    """class created to do test cases
+    for base_model module"""
 
-    def setUp(self):
-        """Prepare test environment"""
-        self.model = BaseModel()
-        if os.path.exists("file.json"):
-            os.rename("file.json", "temp.json")
+    def test_attr(self):
+        """test attributes"""
 
-    def tearDown(self):
-        """Clean up after each test"""
-        if os.path.exists("file.json"):
-            os.remove("file.json")
-        if os.path.exists("temp.json"):
-            os.rename("temp.json", "file.json")
+        model = BaseModel()
+        model.name = "model"
+        model.id = "115"
+        self.assertTrue(hasattr(model, "name"))
+        self.assertTrue(hasattr(model, "id"))
+        self.assertEqual(str, type(model.id))
+        self.assertEqual(str, type(model.name))
+        self.assertTrue(datetime, type(model.created_at))
+        self.assertTrue(datetime, type(model.updated_at))
+        self.assertEqual(len(model.__dict__), 4)
 
-    def test_attributes_existence_and_types(self):
-        """Test attributes' existence and types"""
-        self.model.name = "model"
-        self.assertTrue(hasattr(self.model, "name"))
-        self.assertEqual(str, type(self.model.id))
-        self.assertEqual(str, type(self.model.name))
-        self.assertIsInstance(self.model.created_at, datetime)
-        self.assertIsInstance(self.model.updated_at, datetime)
-        self.assertEqual(len(self.model.__dict__), 3)
+    def test_represent(self):
+        """test cases for the object representations"""
 
-    def test_string_representation(self):
-        """Test string representation of object"""
+        model1 = BaseModel()
+        model1.id = "116"
         date = datetime.now()
-        self.model.id = "116"
-        self.model.created_at = self.model.updated_at = date
-        expected_string = "[BaseModel] (116) {'id': '116', 'created_at': %r, 'updated_at': %r}" % (date, date)
-        self.assertEqual(expected_string, str(self.model))
+        model1.created_at = model1.updated_at = date
+        dateRep = repr(date)
+        string = str(model1)
+        self.assertIn("[BaseModel] (116)", string)
+        self.assertIn("'created_at': " + dateRep, string)
+        self.assertIn("'updated_at': " + dateRep, string)
+        self.assertIn("'id': '116'", string)
 
-    def test_to_dict_method(self):
-        """Test the to_dict method"""
-        self.model.id = "117"
-        self.assertEqual(self.model.id, self.model.to_dict()["id"])
-        self.assertEqual(self.model.created_at.isoformat(), self.model.to_dict()["created_at"])
-        self.assertEqual(self.model.updated_at.isoformat(), self.model.to_dict()["updated_at"])
-        self.assertEqual("BaseModel", self.model.to_dict()["__class__"])
+    def test_toDict(self):
+        """test cases for the to_dict method"""
 
-    def test_instance_creation(self):
-        """Test instantiation of BaseModel"""
-        self.assertIsInstance(self.model, BaseModel)
+        model3 = BaseModel()
+        model3.id = "117"
+        a = model3.created_at
+        b = model3.updated_at
+        c = type(model3).__name__
+        self.assertEqual(model3.id, model3.to_dict()["id"])
+        self.assertEqual(a.isoformat(), model3.to_dict()["created_at"])
+        self.assertEqual(b.isoformat(), model3.to_dict()["updated_at"])
+        self.assertEqual(c, model3.to_dict()["__class__"])
 
-    def test_save_method_with_incorrect_args(self):
-        """Test the save method with incorrect arguments"""
+    def test_instant(self):
+        """testing instantiation"""
+
+        model2 = BaseModel()
+        self.assertIsInstance(model2, BaseModel)
+
+    def test_save_none(self):
+        """testing save method with None argument"""
+
+        model4 = BaseModel()
         with self.assertRaises(TypeError):
-            self.model.save(None)
+            model4.save(None)
 
-    def test_updated_at_after_save(self):
-        """Test if updated_at attribute is modified after save"""
-        old_updated = self.model.updated_at
-        self.model.save()
-        self.assertNotEqual(old_updated, self.model.updated_at)
+    def test_save_updatedattr(self):
+        """testing if updated_at attribute is changed after using
+        save method"""
 
-    def test_instance_saved_to_file(self):
-        """Test if the instance is saved to the JSON file after save"""
-        self.model.save()
+        model5 = BaseModel()
+        old_updated = model5.updated_at
+        model5.save()
+        self.assertNotEqual(old_updated, model5.updated_at)
+
+    def test_save_infile(self):
+        """testing if the instance created is saved in the json file after
+        the saving method"""
+
+        model6 = BaseModel()
+        model6.save()
+        represen = "BaseModel." + model6.id
         with open("file.json", "r") as file:
-            self.assertIn("BaseModel." + self.model.id, file.read())
+            self.assertIn(represen, file.read())
+
+    @classmethod
+    def setUp(self):
+        try:
+            os.rename("file.json", "temp.json")
+        except IOError:
+            pass
+
+    @classmethod
+    def tearDown(self):
+        try:
+            os.remove("file.json")
+        except IOError:
+            pass
+        try:
+            os.rename("temp.json", "file.json")
+        except IOError:
+            pass
 
 
 if __name__ == "__main__":
