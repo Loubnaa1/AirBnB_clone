@@ -1,8 +1,5 @@
 #!/usr/bin/python3
-"""
-Defines the FileStorage class responsible for serialization and deserialization
-of instances to and from a JSON file.
-"""
+"""Defines the FileStorage class."""
 
 import json
 from models.base_model import BaseModel
