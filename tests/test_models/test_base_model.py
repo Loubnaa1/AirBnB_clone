@@ -1,11 +1,5 @@
 #!/usr/bin/python3
-"""Defines unittests for models/base_model.py.
-
-Unittest classes:
-    TestBaseModel_instantiation
-    TestBaseModel_save
-    TestBaseModel_to_dict
-"""
+"""Defines unittests for models/base_model.py."""
 import os
 import models
 import unittest
@@ -21,7 +15,7 @@ class TestBaseModel_instantiation(unittest.TestCase):
         self.assertEqual(BaseModel, type(BaseModel()))
 
     def test_new_instance_stored_in_objects(self):
-        self.assertIn(BaseModel(), models.storage.all().values())
+        self.assertIn(BaseModel(), list(models.storage.all().values()))
 
     def test_id_is_public_str(self):
         self.assertEqual(str, type(BaseModel().id))
@@ -147,17 +141,19 @@ class TestBaseModel_to_dict(unittest.TestCase):
 
     def test_to_dict_contains_correct_keys(self):
         bm = BaseModel()
-        self.assertIn("id", bm.to_dict())
-        self.assertIn("created_at", bm.to_dict())
-        self.assertIn("updated_at", bm.to_dict())
-        self.assertIn("__class__", bm.to_dict())
+        bm_dict = bm.to_dict()
+        self.assertIn("id", bm_dict)
+        self.assertIn("created_at", bm_dict)
+        self.assertIn("updated_at", bm_dict)
+        self.assertIn("__class__", bm_dict)
 
     def test_to_dict_contains_added_attributes(self):
         bm = BaseModel()
         bm.name = "Holberton"
         bm.my_number = 98
-        self.assertIn("name", bm.to_dict())
-        self.assertIn("my_number", bm.to_dict())
+        bm_dict = bm.to_dict()
+        self.assertIn("name", bm_dict)
+        self.assertIn("my_number", bm_dict)
 
     def test_to_dict_datetime_attributes_are_strs(self):
         bm = BaseModel()
@@ -170,13 +166,13 @@ class TestBaseModel_to_dict(unittest.TestCase):
         bm = BaseModel()
         bm.id = "123456"
         bm.created_at = bm.updated_at = dt
-        tdict = {
+        expected_dict = {
             'id': '123456',
             '__class__': 'BaseModel',
             'created_at': dt.isoformat(),
             'updated_at': dt.isoformat()
         }
-        self.assertDictEqual(bm.to_dict(), tdict)
+        self.assertDictEqual(bm.to_dict(), expected_dict)
 
     def test_contrast_to_dict_dunder_dict(self):
         bm = BaseModel()
